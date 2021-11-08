@@ -1,9 +1,3 @@
-# Release Title
+Includes the following changes:
 
-This release include the following:
-
-* Initial GitHub Action builder with:
-  * GitVersion
-  * Go compiling
-  * Arifact create and uploading
-  * Conditional release
+* Remove quotes from Go version in workflow
