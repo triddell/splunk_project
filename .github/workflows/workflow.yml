@@ -7,28 +7,41 @@ jobs:
   build-splunk-project:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: gittools/actions/gitversion/setup@v0.9.7
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
         with:
           versionSpec: 5.x
-      - uses: gittools/actions/gitversion/execute@v0.9.7
+      - name: Execute GitVersion
+        uses: gittools/actions/gitversion/execute@v0.9.7
         with:
           useConfigFile: true
           configFilePath: GitVersion.yml
-      - uses: actions/setup-go@v2
-      - run: GOOS=darwin GOARCH=amd64 go build -o darwin_x86_64/bin/hello
-      - run: GOOS=linux GOARCH=amd64 go build -o linux_x86_64/bin/hello
-      - run: GOOS=windows GOARCH=amd64 go build -o windows_x86_64/bin/hello.exe
-      - run: sed -i "s/VERSION/$GITVERSION_SEMVER/g" default/app.conf
-      - run: tar --transform 's|^|/splunk_project/|' -czf "splunk_project_$GITVERSION_SEMVER.tgz" default metadata darwin_x86_64 linux_x86_64 windows_x86_64
-      - uses: actions/upload-artifact@v2
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.17.2'
+      - name: Compile darwin binary
+        run: GOOS=darwin GOARCH=amd64 go build -o darwin_x86_64/bin/hello
+      - name: Compile linux binary
+        run: GOOS=linux GOARCH=amd64 go build -o linux_x86_64/bin/hello
+      - name: Compile windows binary
+        run: GOOS=windows GOARCH=amd64 go build -o windows_x86_64/bin/hello.exe
+      - name: Update version in app.conf
+        run: sed -i "s/VERSION/$GITVERSION_SEMVER/g" default/app.conf
+      - name: Create tgz artifact
+        run: tar --transform 's|^|/splunk_project/|' -czf "splunk_project_$GITVERSION_SEMVER.tgz" default metadata darwin_x86_64 linux_x86_64 windows_x86_64
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
         with:
           name: splunk_project_${{ env.GITVERSION_SEMVER }}
           path: splunk_project_${{ env.GITVERSION_SEMVER }}.tgz
           retention-days: 2
-      - uses: ncipollo/release-action@v1
+      - name: Create release
+        uses: ncipollo/release-action@v1
         if: contains(github.event.head_commit.message, '; release')
         with:
           artifacts: splunk_project_${{ env.GITVERSION_SEMVER }}.tgz
