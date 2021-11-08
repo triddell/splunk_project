@@ -19,7 +19,7 @@ jobs:
       - run: sed -i 's/$VERSION/$(GitVersion.NuGetVersion)/g' default/app.conf
       - run: tar --exclude='.github' --exclude='.git' --exclude='.gitignore' --exclude='GitVersion.yml' --exclude='*.go' --exclude='go.*' --transform 's|^|/splunk_project/|' -czf splunk_project_$(GITVERSION_SEMVER).tgz .
       - uses: actions/upload-artifact@v2
-          with:
-            name: splunk_project_${{ env.GITVERSION_SEMVER }}
-            path: splunk_project_${{ env.GITVERSION_SEMVER }}.tgz
-            retention-days: 2
+        with:
+          name: splunk_project_${{ env.GITVERSION_SEMVER }}
+          path: splunk_project_${{ env.GITVERSION_SEMVER }}.tgz
+          retention-days: 2
