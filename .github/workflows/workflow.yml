@@ -20,7 +20,7 @@ jobs:
       - run: GOOS=windows GOARCH=amd64 go build -o windows_x86_64/bin/hello.exe
       - run: sed -i "s/VERSION/$GITVERSION_SEMVER/g" default/app.conf
       - run: cat default/app.conf
-      - run: tar --exclude='.github' --exclude='.git' --exclude='.gitignore' --exclude='GitVersion.yml' --exclude='*.go' --exclude='go.*' --transform 's|^|/splunk_project/|' -czf splunk_project_$GITVERSION_SEMVER.tgz .
+      - run: tar -czf "splunk_project_$GITVERSION_SEMVER.tgz" default metadata darwin_x86_64 linux_x86_64 windows_x86_64
       - uses: actions/upload-artifact@v2
         with:
           name: splunk_project_${{ env.GITVERSION_SEMVER }}
