@@ -25,3 +25,8 @@ jobs:
           name: splunk_project_${{ env.GITVERSION_SEMVER }}
           path: splunk_project_${{ env.GITVERSION_SEMVER }}.tgz
           retention-days: 2
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: splunk_project_${{ env.GITVERSION_SEMVER }}.tgz
+          tag: v${{ env.GITVERSION_SEMVER }}
+          token: ${{ secrets.GITHUB_TOKEN }}
