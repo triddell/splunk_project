@@ -1,0 +1,18 @@
+name: build-splunk-project
+on: [push]
+jobs:
+  build-splunk-project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: '5.x'
+      - uses: gittools/actions/gitversion/execute@v0.9.7
+        with:
+          useConfigFile: true
+          configFilePath: GitVersion.yml
+      - uses: actions/setup-go@v2
+      - run: GOOS=darwin GOARCH=amd64 go build -o darwin_x86_64/bin/hello
+      - run: GOOS=linux GOARCH=amd64 go build -o linux_x86_64/bin/hello
+      - run: GOOS=windows GOARCH=amd64 go build -o windows_x86_64/bin/hello.exe
